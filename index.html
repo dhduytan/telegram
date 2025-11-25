@@ -1,0 +1,279 @@
+<!doctype html>
+<html lang="vi">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Đại Học Duy Tân</title>
+    <link rel="icon" href="logo.png" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 🔒 KHÔNG CHO CUỘN BODY (Giữ nguyên màn hình ứng dụng) */
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            /* Chặn cuộn trang web chính */
+        }
+
+        body {
+            touch-action: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+
+            /* Nền cầu vồng */
+            background: linear-gradient(45deg,
+                    red, orange, yellow, rgb(164, 246, 164), cyan, rgb(142, 142, 241), violet, red);
+            background-size: 400% 400%;
+            animation: rainbow 60s ease infinite;
+        }
+
+        @keyframes rainbow {
+            0% {
+                background-position: 0% 50%;
+            }
+
+            50% {
+                background-position: 100% 50%;
+            }
+
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+
+        .container {
+            /* padding: 40px;  --> Đổi thành padding linh hoạt bên dưới */
+            padding: 20px;
+            border-radius: 20px;
+            text-align: center;
+            width: 90%;
+            max-width: 400px;
+
+            /* QUAN TRỌNG: Giới hạn chiều cao và cho phép cuộn nội dung */
+            max-height: 95vh;
+            /* Không bao giờ cao quá 95% màn hình */
+            overflow-y: auto;
+            /* Tự hiện thanh cuộn nếu nội dung dài quá màn hình */
+
+            /* Ẩn thanh cuộn cho đẹp nhưng vẫn cuộn được */
+            scrollbar-width: none;
+            /* Firefox */
+            -ms-overflow-style: none;
+            /* IE/Edge */
+
+            transition: transform 0.3s ease;
+            animation: fadeIn 0.8s ease-out;
+
+            /* Giúp căn chỉnh layout bên trong tốt hơn */
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        /* Ẩn thanh cuộn trên Chrome/Safari/Opera */
+        .container::-webkit-scrollbar {
+            display: none;
+        }
+
+        .container:hover {
+            transform: translateY(-2px);
+            /* Giảm độ nảy để đỡ bị lỗi trên mobile */
+        }
+
+        .logo-area {
+            margin-bottom: 20px;
+            flex-shrink: 0;
+            /* Không cho logo bị bóp méo */
+        }
+
+        .logo-area img {
+            max-width: 180px;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+            filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+            transition: max-width 0.3s ease;
+            /* Hiệu ứng thu nhỏ mượt */
+        }
+
+        .btn-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px 10px;
+            font-size: 16px;
+            font-weight: 700;
+            color: #000;
+            background: transparent;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            position: relative;
+            text-shadow: 0px 0px 8px rgba(255, 255, 255, 0.8),
+                0px 0px 2px rgba(255, 255, 255, 1);
+
+            flex-shrink: 0;
+            /* Đảm bảo nút không bị bóp dẹp */
+        }
+
+        .btn i {
+            margin-right: 10px;
+            font-size: 18px;
+        }
+
+        .btn:hover {
+            transform: scale(1.02);
+            /* Giảm độ scale chút cho mobile đỡ lag */
+            color: #800000;
+            text-shadow: 0px 0px 10px rgba(255, 255, 255, 1);
+        }
+
+        .footer {
+            margin-top: 30px;
+            margin-bottom: 10px;
+            /* Thêm lề dưới để không sát mép khi cuộn */
+            font-size: 12px;
+            color: #000;
+            font-weight: bold;
+            text-shadow: 0 0 2px #fff;
+            flex-shrink: 0;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- MEDIA QUERY CHO MÀN HÌNH NHỎ (MOBILE) --- */
+        /* Khi màn hình cao dưới 700px hoặc rộng dưới 400px */
+        @media (max-height: 700px),
+        (max-width: 400px) {
+            .container {
+                padding: 10px;
+                /* Giảm lề khung */
+                width: 95%;
+                /* Mở rộng chiều ngang */
+            }
+
+            .logo-area {
+                margin-bottom: 10px;
+                /* Giảm khoảng cách logo */
+            }
+
+            .logo-area img {
+                max-width: 120px;
+                /* Thu nhỏ logo */
+            }
+
+            .btn {
+                padding: 10px 5px;
+                /* Nút gọn lại */
+                font-size: 14px;
+                /* Chữ nhỏ lại */
+                gap: 5px;
+                /* Khoảng cách giữa các nút sát hơn */
+            }
+
+            .btn i {
+                font-size: 16px;
+                /* Icon nhỏ lại */
+                margin-right: 5px;
+            }
+
+            .footer {
+                margin-top: 15px;
+                font-size: 11px;
+            }
+        }
+
+        /* Chế độ màn hình Siêu Nhỏ (iPhone SE đời đầu hoặc gập lại) */
+        @media (max-height: 500px) {
+            .logo-area img {
+                max-width: 90px;
+            }
+
+            .btn {
+                padding: 8px 2px;
+                font-size: 13px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="logo-area">
+            <img src="logotrangchu.png" alt="Logo Đại Học Duy Tân">
+        </div>
+
+        <div class="btn-group">
+            <a href="https://mydtu.duytan.edu.vn/Signin.aspx" class="btn">
+                <i class="fas fa-home"></i> Cổng thông tin ĐH Duy Tân
+            </a>
+
+            <a href="lichthi.html" class="btn">
+                <i class="fa-regular fa-calendar-days"></i> Lịch Thi
+            </a>
+
+            <a href="danhsachthi.html" class="btn">
+                <i class="fa-solid fa-list-check"></i> Danh Sách Thi
+            </a>
+
+            <a href="https://pdaotao.duytan.edu.vn/ANNOUNCEMENT/Default.aspx?lang=VN" class="btn">
+                <i class="fa-regular fa-bell"></i> Thông báo phòng Đào Tạo
+            </a>
+
+            <a href="https://pdaotao.duytan.edu.vn/EXAM_LIST/Default.aspx?lang=VN" class="btn">
+                <i class="fa-solid fa-globe"></i> Danh Sách Thi phòng Đào Tạo
+            </a>
+
+            <a href="https://t.me/s/Dai_Hoc_Duy_Tan" class="btn">
+                <i class="fab fa-telegram-plane"></i> DTU Official Community
+            </a>
+
+            <a href="https://t.me/chatsinhvienDTU" class="btn">
+                <i class="fab fa-telegram-plane"></i> Chat DTU
+            </a>
+        </div>
+
+        <div class="footer">
+            &copy; Trang miễn trừ trách nhiệm khi có sự sai lệch
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('contextmenu', e => e.preventDefault());
+        document.addEventListener('keydown', e => {
+            if (e.key === "F12" || (e.ctrlKey && (e.key === "U" || e.key === "S")) || (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "J"))) {
+                e.preventDefault();
+            }
+        });
+    </script>
+
+</body>
+
+</html>

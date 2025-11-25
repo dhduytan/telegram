@@ -1,0 +1,373 @@
+:root {
+    --primary-color: #007bff;
+    --secondary-color: #6c757d;
+    --success-color: #28a745;
+    --error-color: #dc3545;
+    --warning-color: #ffc107;
+    --bg-light: #f8f9fa;
+    --border-color: #e9ecef;
+}
+
+/* 1. Cố định chiều cao màn hình và ẩn thanh cuộn thừa */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: var(--bg-light);
+    
+    /* THÊM 2 DÒNG NÀY ĐỂ XÓA THANH CUỘN NGOÀI */
+    height: 100vh; 
+    overflow: hidden; 
+    
+    /* Căn giữa nội dung theo chiều dọc */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* 2. Điều chỉnh container để không bị tràn */
+.container {
+    width: 95%;
+    max-width: 1400px;
+    /* Đặt chiều cao tối đa để container không bao giờ dài hơn màn hình */
+    max-height: 98vh; 
+    margin: 0 auto;
+    background: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+    
+    /* Sử dụng Flexbox để bảng tự co giãn */
+    display: flex;
+    flex-direction: column;
+}
+
+/* 3. Quan trọng: Khu vực bảng sẽ chiếm hết khoảng trống còn lại và tự cuộn */
+.table-wrapper {
+    /* Thay vì set chiều cao cứng, hãy dùng flex-grow */
+    flex-grow: 1; 
+    
+    /* Đảm bảo vùng này có thanh cuộn riêng */
+    overflow-y: auto; 
+    overflow-x: auto;
+    
+    margin-top: 15px;
+    position: relative;
+    padding-bottom: 5px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    
+    /* Giới hạn chiều cao tối thiểu để bảng không bị bóp quá nhỏ */
+    min-height: 200px; 
+}
+
+/* Container chính */
+.container {
+    width: 95%; /* Mặc định chiếm 95% màn hình */
+    max-width: 1400px; /* Giới hạn tối đa trên PC */
+    margin: 10px auto;
+    background: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    box-sizing: border-box;
+}
+
+h1 {
+    color: var(--primary-color);
+    text-align: center;
+    margin: 5px 0 10px 0;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 8px;
+    font-size: 1.2rem;
+    line-height: 1.4;
+}
+
+h2 {
+    color: #343a40;
+    margin-top: 15px;
+    padding-left: 10px;
+    border-left: 4px solid var(--warning-color);
+    font-size: 1.1rem;
+}
+
+/* --- STEP 1: UPLOAD --- */
+#step1Container {
+    padding: 20px 10px;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    background-color: #ffffff;
+    text-align: center;
+}
+
+input[type="file"] {
+    display: block;
+    margin: 15px auto;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    width: 100%; /* Full width trên mobile */
+    max-width: 400px;
+    box-sizing: border-box;
+    background-color: #fdfdfd;
+    font-size: 14px;
+}
+
+/* Ẩn các thành phần cũ */
+#uploadStatus, .result-message, #resultMessageContainer, #toastContainer {
+    display: none !important;
+}
+
+/* --- SEARCH SECTION --- */
+#searchSection {
+    padding: 10px;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    background-color: #fff;
+}
+
+.search-input-group {
+    display: flex;
+    gap: 8px;
+    margin-top: 5px;
+    flex-wrap: wrap; /* Cho phép xuống dòng trên màn hình cực bé */
+}
+
+input[type="text"] {
+    padding: 12px; /* Tăng vùng chạm cho ngón tay */
+    border-radius: 6px;
+    border: 1px solid #ccc;
+    flex-grow: 1;
+    box-sizing: border-box;
+    font-size: 16px; /* Font 16px để tránh iOS zoom in */
+    transition: border-color 0.3s;
+    min-width: 0; /* Fix flexbox overflow */
+}
+
+input[type="text"]:focus {
+    border-color: var(--primary-color);
+    outline: none;
+}
+
+.copy-button {
+    padding: 12px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    background-color: #fd7e14;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+/* --- TABLE DISPLAY --- */
+.table-wrapper {
+    /* Sử dụng dvh để tính chiều cao thực tế trên mobile browser */
+    max-height: 75vh; 
+    overflow-y: auto;
+    overflow-x: auto; /* Cuộn ngang */
+    margin-top: 15px;
+    position: relative;
+    padding-bottom: 5px;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    -webkit-overflow-scrolling: touch; /* Cuộn mượt trên iOS */
+}
+
+#captureArea {
+    overflow: visible !important;
+    min-width: 600px; /* Đảm bảo bảng không bị bóp méo quá mức */
+}
+
+.table-wrapper.capturing {
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+#resultTable {
+    width: 100%;
+    border-collapse: collapse;
+    /* Bỏ table-layout: fixed để cột tự co giãn theo nội dung trên mobile */
+    table-layout: auto; 
+    background-color: white;
+}
+
+#resultTable th,
+#resultTable td {
+    border: 1px solid #dee2e6;
+    padding: 8px 6px;
+    text-align: left;
+    font-size: 13px; /* Font nhỏ hơn chút cho mobile */
+    vertical-align: middle;
+}
+
+#resultTable th {
+    background-color: var(--primary-color);
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 12px;
+    white-space: nowrap; /* Tiêu đề không xuống dòng */
+}
+
+#resultTable tbody tr:nth-child(even) {
+    background-color: #f8f9fa;
+}
+
+/* --- CÁC CỘT ẨN --- */
+#resultTable th:nth-child(5), #resultTable td:nth-child(5),
+#resultTable th:nth-child(6), #resultTable td:nth-child(6),
+#resultTable th:nth-child(11), #resultTable td:nth-child(11),
+#resultTable th:nth-child(12), #resultTable td:nth-child(12),
+#resultTable th:nth-child(13), #resultTable td:nth-child(13),
+#resultTable th:nth-child(14), #resultTable td:nth-child(14) {
+    display: none;
+}
+
+/* Highlight Khối thi */
+.highlight-khoithi {
+    background-color: #fd7e14;
+    color: white;
+    font-weight: bold;
+    padding: 2px 4px;
+    border-radius: 3px;
+    display: inline-block;
+}
+
+/* --- MODAL CSS --- */
+#modalContainer {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(2px);
+    padding: 0 10px; /* Padding 2 bên cho màn hình nhỏ */
+    box-sizing: border-box;
+    align-items: center;
+    justify-content: center;
+}
+
+#modalContainer.show {
+    display: flex; /* Sử dụng flex để căn giữa hoàn hảo */
+}
+
+.modal-content {
+    background: #fff;
+    padding: 20px;
+    width: 100%;
+    max-width: 320px; /* Giới hạn chiều rộng modal trên mobile */
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    animation: popIn 0.3s ease;
+}
+
+@keyframes popIn {
+    from { transform: scale(0.8); opacity: 0; }
+    to { transform: scale(1); opacity: 1; }
+}
+
+.modal-icon {
+    font-size: 2.5em;
+    margin-bottom: 10px;
+    display: block;
+}
+
+.modal-content h3 {
+    margin: 0 0 8px 0;
+    font-size: 1.3em;
+}
+
+.modal-content p {
+    font-size: 0.95em;
+    color: #555;
+    margin-bottom: 15px;
+    line-height: 1.4;
+}
+
+.modal-actions {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.modal-btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.95em;
+    cursor: pointer;
+    flex: 1; /* Nút bấm chia đều chiều rộng */
+}
+
+.modal-btn-confirm { background-color: var(--primary-color); color: white; }
+.modal-btn-cancel { background-color: var(--secondary-color); color: white; }
+
+/* --- MOBILE OPTIMIZATION (Màn hình < 480px) --- */
+@media (max-width: 480px) {
+    .container {
+        width: 100%;
+        margin: 0;
+        border-radius: 0;
+        padding: 10px;
+        height: 100vh; /* Full màn hình */
+        display: flex;
+        flex-direction: column;
+    }
+
+    h1 {
+        font-size: 1.1em;
+        margin-bottom: 5px;
+    }
+
+    #step1Container {
+        padding: 15px;
+    }
+
+    #step2Container {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        overflow: hidden;
+    }
+
+    #searchSection {
+        padding: 8px;
+        flex-shrink: 0;
+    }
+
+    .search-input-group {
+        flex-direction: column; /* Xếp dọc ô tìm kiếm và nút */
+    }
+
+    .copy-button {
+        width: 100%;
+        padding: 10px;
+    }
+
+    .table-wrapper {
+        flex-grow: 1; /* Chiếm phần còn lại của màn hình */
+        max-height: none; /* Bỏ giới hạn cứng */
+        margin-top: 10px;
+    }
+
+    #resultTable th, #resultTable td {
+        font-size: 12px; /* Chữ nhỏ hơn để hiển thị nhiều hơn */
+        padding: 6px 4px;
+    }
+    
+    /* Điều chỉnh cột cho mobile */
+    #resultTable th:nth-child(1) { width: 30px; } /* STT */
+    #resultTable th:nth-child(2) { width: 60px; } /* Ngày thi */
+    #resultTable th:nth-child(8) { min-width: 150px; } /* Tên môn - cho phép dài ra */
+}
