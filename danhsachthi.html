@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Danh sách thi</title>
+    <link rel="icon" href="logo.png"/>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <style>
@@ -260,5 +261,6 @@
         async function loadData() { const cachedData = localStorage.getItem(CONFIG.CACHE_KEY); const lastUpdate = localStorage.getItem(CONFIG.CACHE_TIME_KEY); if (cachedData) { allExams = JSON.parse(cachedData); renderExams(allExams); if (lastUpdate) dom.status.innerHTML = `🔄 Dữ liệu cũ: ${lastUpdate}. Đang tải...`; } else { renderSkeleton(); dom.status.innerHTML = `🔄 Đang tải...`; } try { const response = await fetch(CONFIG.PROXY + encodeURIComponent(CONFIG.ORIGINAL_API)); if (!response.ok) throw new Error(`HTTP ${response.status}`); const json = await response.json(); const newData = json.response?.data || []; if (newData.length > 0 && JSON.stringify(newData) !== cachedData) { allExams = newData; allExams.sort((a, b) => (parseDate(b.uploadDate) || 0) - (parseDate(a.uploadDate) || 0)); renderExams(allExams); const now = new Date().toLocaleString('vi-VN'); localStorage.setItem(CONFIG.CACHE_KEY, JSON.stringify(allExams)); localStorage.setItem(CONFIG.CACHE_TIME_KEY, now); dom.status.innerHTML = `✅ Cập nhật: ${now}`; } else { dom.status.innerHTML = `✅ Mới nhất (${lastUpdate})`; } } catch (error) { if (cachedData) { dom.status.innerHTML = `⚠️ Lỗi tải. Đang xem bản offline.`; dom.status.style.color = '#d9534f'; } else { dom.list.innerHTML = `<div class="error">❌ Lỗi tải dữ liệu.<br>${error.message}</div>`; } } } let timeoutId; dom.search.addEventListener('keyup', (e) => { clearTimeout(timeoutId); timeoutId = setTimeout(() => { const query = e.target.value.toLowerCase().trim(); const filtered = allExams.filter(exam => `${exam.examTitle} ${exam.uploadDate}`.toLowerCase().includes(query)); renderExams(filtered); }, 300); }); loadData(); setInterval(loadData, CONFIG.REFRESH_INTERVAL);
     </script>
 </body>
+
 
 </html>
