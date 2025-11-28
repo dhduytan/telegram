@@ -92,50 +92,84 @@ function hideModal() {
     document.getElementById('modalContainer').classList.remove('show');
 }
 
-function showDownloadConfirmModal() {
+// --- THAY ĐỔI: Hàm hiển thị xác nhận sao chép ---
+function showCopyConfirmModal() {
     const tableBody = document.querySelector('#resultTable tbody');
     if (tableBody.children.length === 0 || tableBody.querySelector('td').textContent.includes('Chưa có dữ liệu')) {
-        showModal('Không Có Dữ Liệu!', 'Không có dữ liệu để tải xuống.', 'error');
+        showModal('Không Có Dữ Liệu!', 'Không có dữ liệu để sao chép.', 'error');
         return;
     }
 
     const actions = [
-        { text: 'Xác Nhận', class: 'confirm', action: downloadTableImageLogic },
+        { text: 'Xác Nhận', class: 'confirm', action: copyTableImageToClipboard },
         { text: 'Hủy', class: 'cancel', action: hideModal }
     ];
-    showModal('Xác Nhận Tải Xuống', 'Bạn có muốn tải bảng kết quả này dưới dạng hình ảnh không?', 'confirm', actions, 0);
+    showModal('Xác Nhận Sao Chép', 'Bạn có muốn sao chép lịch thi này vào bộ nhớ tạm không?', 'confirm', actions, 0);
 }
 
-function downloadTableImageLogic() {
+// --- THAY ĐỔI: Hàm xử lý chụp ảnh và copy vào clipboard ---
+function copyTableImageToClipboard() {
     const tableWrapper = document.getElementById('tableWrapper');
     const captureArea = document.getElementById('captureArea');
+    const exportHeader = document.getElementById('exportHeader');
+    const exportTimeText = document.getElementById('exportTimeText');
 
-    showModal('Đang Tạo Ảnh...', 'Vui lòng đợi trong giây lát...', 'info', null, 5000);
+    showModal('Đang Xử Lý...', 'Đang tạo ảnh và sao chép, vui lòng đợi...', 'info', null, 8000);
+
+    // 1. Lấy thời gian hiện tại và hiển thị Header
+    const now = new Date();
+    const hours = String(now.getHours()).padStart(2, '0');
+    const minutes = String(now.getMinutes()).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const year = now.getFullYear();
+
+    exportTimeText.textContent = `Thời gian tra cứu: ${hours}:${minutes} - ${day}/${month}/${year}`;
+    exportHeader.style.display = 'block';
 
     tableWrapper.classList.add('capturing');
     const originalScroll = tableWrapper.scrollTop;
+    // Cuộn lên đầu để chụp hết
+    tableWrapper.scrollTop = 0;
 
+    // Đợi 1 chút để DOM cập nhật hiển thị header
     setTimeout(() => {
         html2canvas(captureArea, { scale: 2, useCORS: true, backgroundColor: '#ffffff' }).then(canvas => {
+            // Ẩn lại header sau khi chụp xong
+            exportHeader.style.display = 'none';
             tableWrapper.classList.remove('capturing');
             tableWrapper.scrollTop = originalScroll;
 
-            const image = canvas.toDataURL('image/png');
-            const link = document.createElement('a');
-            const date = new Date();
-            const dateString = `${String(date.getDate()).padStart(2, '0')}_${String(date.getMonth() + 1).padStart(2, '0')}_${date.getFullYear()}`;
-            link.download = `LichThi_${dateString}.png`;
-            link.href = image;
-            link.click();
+            // Chuyển Canvas thành Blob để copy
+            canvas.toBlob(function (blob) {
+                if (!blob) {
+                    showModal('Lỗi!', 'Không tạo được ảnh.', 'error');
+                    return;
+                }
 
-            showModal('Hoàn Tất!', 'Hình ảnh đã được tải xuống thành công!', 'success');
+                try {
+                    // API ClipboardItem để ghi ảnh
+                    const item = new ClipboardItem({ "image/png": blob });
+                    navigator.clipboard.write([item]).then(() => {
+                        showModal('Thành Công!', 'Đã sao chép ảnh lịch thi vào bộ nhớ tạm.<br>Bạn có thể dán (Paste) ngay bây giờ.', 'success');
+                    }).catch(err => {
+                        console.error("Lỗi clipboard:", err);
+                        showModal('Lỗi Quyền', 'Trình duyệt chặn quyền sao chép ảnh tự động. Hãy thử lại.', 'error');
+                    });
+                } catch (err) {
+                    console.error("Lỗi tạo item clipboard:", err);
+                    showModal('Lỗi!', 'Trình duyệt của bạn không hỗ trợ sao chép ảnh trực tiếp.', 'error');
+                }
+            }, 'image/png');
+
         }).catch(error => {
+            exportHeader.style.display = 'none';
             tableWrapper.classList.remove('capturing');
             tableWrapper.scrollTop = originalScroll;
             console.error("Lỗi khi tạo ảnh:", error);
             showModal('Lỗi!', 'Không thể tạo hình ảnh. Vui lòng thử lại.', 'error');
         });
-    }, 100);
+    }, 150); // Delay nhẹ để render style
 }
 
 function excelSerialToJSDate(serial) {
@@ -261,11 +295,8 @@ function searchData() {
 
             if (!matchFound && searchKhoiThi && maMonValue.includes(searchMaMon)) {
                 const matchBracket = khoiThiRaw.match(/\((.*?)\)/);
-                // --- SỬA LỖI TẠI ĐÂY: Tách mảng thay vì replace ---
                 if (matchBracket) {
-                    // Tách chuỗi bằng dấu gạch ngang, phẩy hoặc khoảng trắng, sau đó loại bỏ phần tử rỗng
                     const sections = matchBracket[1].split(/[\s\-,]+/).filter(Boolean);
-                    // Kiểm tra chính xác mã lớp có nằm trong mảng không
                     if (sections.includes(searchKhoiThi)) {
                         matchFound = true;
                     }
