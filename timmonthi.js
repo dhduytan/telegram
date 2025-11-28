@@ -261,8 +261,14 @@ function searchData() {
 
             if (!matchFound && searchKhoiThi && maMonValue.includes(searchMaMon)) {
                 const matchBracket = khoiThiRaw.match(/\((.*?)\)/);
-                if (matchBracket && matchBracket[1].replace(/[\s\-]/g, '').includes(searchKhoiThi)) {
-                    matchFound = true;
+                // --- SỬA LỖI TẠI ĐÂY: Tách mảng thay vì replace ---
+                if (matchBracket) {
+                    // Tách chuỗi bằng dấu gạch ngang, phẩy hoặc khoảng trắng, sau đó loại bỏ phần tử rỗng
+                    const sections = matchBracket[1].split(/[\s\-,]+/).filter(Boolean);
+                    // Kiểm tra chính xác mã lớp có nằm trong mảng không
+                    if (sections.includes(searchKhoiThi)) {
+                        matchFound = true;
+                    }
                 }
             }
 
@@ -272,18 +278,14 @@ function searchData() {
     });
 
     const notFoundTerms = new Set(rawTerms.filter(term => !foundTerms.has(term)));
-    // THAY ĐỔI: Truyền rawTerms vào displayResults
     displayResults(filteredData, notFoundTerms, rawTerms);
 }
-// THAY ĐỔI: Hàm hiển thị kết quả đã được sửa lỗi đánh dấu trùng lặp
-// THAY ĐỔI: Hàm hiển thị kết quả đã được nâng cấp logic tách biệt từng dòng
+
 function displayResults(data, notFoundTerms = new Set(), searchTerms = []) {
     const tableBody = document.querySelector('#resultTable tbody');
     const tableHead = document.querySelector('#resultTable thead tr');
     const escapeRegExp = (string) => string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 
-    // --- BƯỚC 1: XÁC ĐỊNH CÁC CỘT QUAN TRỌNG ---
-    // Tìm tên cột chính xác trong file Excel
     const getHeaderKey = (targetName) => HEADERS.find(h => normalizeHeaderName(h).toUpperCase().includes(targetName.toUpperCase())) || targetName;
 
     const KHOI_THI_KEY = getHeaderKey(KHOI_THI_HEADER_NAME);
@@ -291,7 +293,6 @@ function displayResults(data, notFoundTerms = new Set(), searchTerms = []) {
     const MON_THI_KEY = getHeaderKey(MON_THI_HEADER_NAME);
     const NGAY_THI_KEY = getHeaderKey(NGAY_THI_HEADER_NAME);
 
-    // --- BƯỚC 2: VẼ HEADER ---
     tableHead.innerHTML = '';
     tableBody.innerHTML = '';
 
@@ -308,34 +309,26 @@ function displayResults(data, notFoundTerms = new Set(), searchTerms = []) {
     if (data.length === 0) {
         tableBody.innerHTML = `<tr><td colspan="${colspan}">Không tìm thấy kết quả phù hợp.</td></tr>`;
     } else {
-        // --- BƯỚC 3: DUYỆT QUA TỪNG DÒNG DỮ LIỆU ---
         data.forEach(row => {
             const tr = document.createElement('tr');
 
-            // --- LOGIC MỚI: TÌM KHỐI THI CỤ THỂ CHO RIÊNG DÒNG NÀY ---
-            // 1. Lấy Mã môn và Tên môn của dòng hiện tại
             const rowMaMon = String(row[MA_MON_KEY] || '').toUpperCase();
             const rowMonThi = String(row[MON_THI_KEY] || '').toUpperCase();
 
-            // 2. Xem dòng này khớp với từ khóa tìm kiếm nào (VD: khớp với 'CS 462 M' hay 'SE 445 A')
             let lettersForThisRow = new Set();
 
             searchTerms.forEach(term => {
-                const { maMon, khoiThi } = splitSearchTerm(term); // Tách "CS 462" và "M"
+                const { maMon, khoiThi } = splitSearchTerm(term);
 
-                // Nếu Mã môn hoặc Tên môn của dòng này CHỨA từ khóa tìm kiếm
                 if ((rowMaMon.includes(maMon) || rowMonThi.includes(maMon)) && khoiThi) {
-                    lettersForThisRow.add(khoiThi); // Chỉ thêm khối thi "M" vào danh sách tô màu
+                    lettersForThisRow.add(khoiThi);
                 }
             });
 
-            // 3. Tạo Regex riêng cho dòng này
-            // Sử dụng \\b để bắt chính xác từ (Ví dụ: \\bA\\b sẽ không bắt AA)
             const sortedLetters = [...lettersForThisRow].sort((a, b) => b.length - a.length);
             const rowRegex = sortedLetters.length > 0
                 ? new RegExp(`\\b(${sortedLetters.map(escapeRegExp).join('|')})\\b`, 'gi')
                 : null;
-            // -----------------------------------------------------------
 
             HEADERS.forEach(header => {
                 const td = document.createElement('td');
@@ -345,10 +338,8 @@ function displayResults(data, notFoundTerms = new Set(), searchTerms = []) {
                     cellValue = excelSerialToJSDate(cellValue);
                 }
 
-                // Nếu là cột Khối thi và dòng này có từ khóa cần tô màu
                 if (header === KHOI_THI_KEY && rowRegex) {
                     const textContent = String(cellValue);
-                    // Thay thế với Regex biên giới từ (\b)
                     td.innerHTML = textContent.replace(rowRegex, `<span class="highlight-khoithi">$1</span>`);
                 } else {
                     td.textContent = cellValue;
