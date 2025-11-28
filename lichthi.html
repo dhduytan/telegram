@@ -5,7 +5,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lịch thi</title>
-    <link rel="icon" href="logoo.png"/>
+    <link rel="icon" href="logoo.png" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <link rel="stylesheet" href="timmonthi.css" />
@@ -40,14 +40,19 @@
                 <div class="search-input-group">
                     <input type="text" id="searchTermInput" placeholder="Nhập Khối thi, Mã môn, hoặc Tên môn..."
                         oninput="searchData()" autocomplete="off" autofocus />
-                    <button class="copy-button" onclick="showDownloadConfirmModal()">
-                        Tải Ảnh
+                    <button class="copy-button" onclick="showCopyConfirmModal()">
+                        Sao chép ảnh
                     </button>
                 </div>
             </div>
 
             <div class="table-wrapper" id="tableWrapper">
                 <div id="captureArea">
+                    <div id="exportHeader" class="export-header" style="display: none;">
+                        <h2 class="export-title">LỊCH THI ĐẠI HỌC DUY TÂN</h2>
+                        <p class="export-time" id="exportTimeText">Thời gian tra cứu: ...</p>
+                    </div>
+
                     <table id="resultTable">
                         <thead>
                             <tr></tr>
@@ -65,4 +70,5 @@
     <script src="lock_system.js"></script>
     <script src="timmonthi.js"></script>
 </body>
+
 </html>
