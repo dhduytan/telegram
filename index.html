@@ -296,6 +296,36 @@
             flex-grow: 1;
             overflow-wrap: break-word;
             user-select: text;
+
+            /* --- CÁC DÒNG MỚI ĐỂ TẠO THANH CUỘN --- */
+            max-height: 400px;
+            /* Giới hạn chiều cao khung chữ (khoảng nửa màn hình) */
+            overflow-y: auto;
+            /* Tự động hiện thanh cuộn dọc khi chữ dài */
+
+            /* Làm đẹp thanh cuộn riêng cho khung này */
+            scrollbar-width: thin;
+            scrollbar-color: #b71c1c #f1f1f1;
+        }
+
+        /* Code làm đẹp thanh cuộn cho trình duyệt Chrome/Edge */
+        .result-answer::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .result-answer::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 4px;
+        }
+
+        .result-answer::-webkit-scrollbar-thumb {
+            background: #b71c1c;
+            /* Màu đỏ đô */
+            border-radius: 4px;
+        }
+
+        .result-answer::-webkit-scrollbar-thumb:hover {
+            background: #d32f2f;
         }
 
         .result-answer strong {
@@ -542,6 +572,11 @@
             #resultDisplay {
                 grid-template-columns: 1fr;
             }
+        }
+
+        .force-full-height .result-answer {
+            max-height: none !important;
+            overflow: visible !important;
         }
     </style>
 </head>
