@@ -252,11 +252,13 @@ function checkAndDisplayHeaders() {
 const normalizeSearchString = (term) => String(term || '').trim().toUpperCase();
 
 const splitSearchTerm = (term) => {
-    const match = term.match(/^(.*?)([A-Z]{1,2})$/i);
+    const match = term.match(/^(.*)\s+([A-Z0-9-]+)$/i);
+
     if (match) {
         const [_, maMon, khoiThi] = match;
         return { maMon: maMon.trim().toUpperCase(), khoiThi: khoiThi.trim().toUpperCase() };
     }
+
     return { maMon: term.toUpperCase(), khoiThi: '' };
 };
 
