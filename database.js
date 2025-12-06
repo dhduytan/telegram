@@ -7,7 +7,7 @@ const generalInfo = [
     {
         keywords: ["qr", "ủng hộ", "quyen góp", "tài trợ"],
         answer:
-            "<img src='/hotro-main/maqrtan.png' alt='Mã QR Quyên góp' style='width:350px; height:350px;'>"
+            "<img src='maqrtan.png' alt='Mã QR Quyên góp' style='width:350px; height:350px;'>"
     },
     {
         keywords: ["địa chỉ", "cơ sở", "ở đâu", "trường ở đâu", "địa điểm"],
@@ -1017,3 +1017,4 @@ const huongdan = [
             "<strong>- Lưu file:</strong> Sau khi chỉnh sửa, hãy lưu lại file với định dạng .pptx để đảm bảo tương thích."
     }
 ];
+
